@@ -85,21 +85,10 @@ button:hover{
     display:none;
 }
 
-.low{
-    background:#dcfce7;
-}
-
-.mid{
-    background:#fef9c3;
-}
-
-.high{
-    background:#fde68a;
-}
-
-.very-high{
-    background:#fecaca;
-}
+.low{ background:#dcfce7; }
+.mid{ background:#fef9c3; }
+.high{ background:#fde68a; }
+.very-high{ background:#fecaca; }
 
 .note{
     background:#eff6ff;
@@ -164,7 +153,6 @@ ADHD 的可能性可能提高。
 <script>
 
 const questions = [
-
 "想喝好幾種飲料，結果每杯都喝一點，常常沒喝完。",
 "看影片時，會同時滑手機、回訊息或做其他事情。",
 "別人講話時，常聽到一半就開始想別的事情。",
@@ -183,44 +171,29 @@ const questions = [
 
 "即使坐著，也常不自覺抖腳、轉筆或摸東西。",
 "腦中經常同時跑很多想法，很難真正放空休息。"
-
 ];
 
 const container = document.getElementById("questions");
 
-questions.forEach((q,index)=>{
+// ✅ 修正：改用 insertAdjacentHTML（避免 innerHTML += 問題）
+questions.forEach((q, index) => {
 
 let html = `
 <div class="question">
-<p>${index+1}. ${q}</p>
+<p>${index + 1}. ${q}</p>
 
 <div class="options">
 
-<label>
-<input type="radio" name="q${index}" value="0" required>
-0 幾乎沒有
-</label>
-
-<label>
-<input type="radio" name="q${index}" value="1">
-1 偶爾
-</label>
-
-<label>
-<input type="radio" name="q${index}" value="2">
-2 經常
-</label>
-
-<label>
-<input type="radio" name="q${index}" value="3">
-3 幾乎每天
-</label>
+<label><input type="radio" name="q${index}" value="0"> 0 幾乎沒有</label>
+<label><input type="radio" name="q${index}" value="1"> 1 偶爾</label>
+<label><input type="radio" name="q${index}" value="2"> 2 經常</label>
+<label><input type="radio" name="q${index}" value="3"> 3 幾乎每天</label>
 
 </div>
 </div>
 `;
 
-container.innerHTML += html;
+container.insertAdjacentHTML("beforeend", html);
 
 });
 
@@ -228,12 +201,12 @@ function calculateScore(){
 
 let total = 0;
 
-for(let i=0;i<questions.length;i++){
+for(let i = 0; i < questions.length; i++){
 
 const selected = document.querySelector(`input[name="q${i}"]:checked`);
 
 if(!selected){
-alert("請完成所有題目");
+alert("請完成所有題目再計算結果");
 return;
 }
 
@@ -283,6 +256,7 @@ behavior:"smooth"
 });
 
 }
+
 </script>
 
 </body>
