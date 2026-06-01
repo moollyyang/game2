@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成人 ADHD 自我檢測</title>
+
+<style>
+body{
+    font-family: "Noto Sans TC", sans-serif;
+    background:#f5f7fb;
+    margin:0;
+    padding:20px;
+    color:#333;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:24px;
+    margin-bottom:20px;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+h1{
+    text-align:center;
+    color:#3b82f6;
+}
+
+h2{
+    color:#2563eb;
+    margin-top:10px;
+}
+
+.question{
+    margin:18px 0;
+    padding-bottom:12px;
+    border-bottom:1px solid #eee;
+}
+
+.question p{
+    margin-bottom:10px;
+    font-weight:500;
+}
+
+.options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+label{
+    cursor:pointer;
+}
+
+.score-box{
+    text-align:center;
+    margin-top:20px;
+}
+
+button{
+    background:#3b82f6;
+    color:white;
+    border:none;
+    padding:14px 24px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#2563eb;
+}
+
+.result{
+    margin-top:20px;
+    padding:20px;
+    border-radius:12px;
+    font-size:18px;
+    display:none;
+}
+
+.low{
+    background:#dcfce7;
+}
+
+.mid{
+    background:#fef9c3;
+}
+
+.high{
+    background:#fde68a;
+}
+
+.very-high{
+    background:#fecaca;
+}
+
+.note{
+    background:#eff6ff;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h1>成人 ADHD 自我檢測</h1>
+
+<div class="note">
+<p><strong>請回想過去 6 個月的情況</strong></p>
+<p>
+0 分：幾乎沒有<br>
+1 分：偶爾<br>
+2 分：經常<br>
+3 分：幾乎每天
+</p>
+</div>
+
+<form id="adhdForm">
+
+<h2>一、注意力與專注</h2>
+
+<div id="questions"></div>
+
+<div class="score-box">
+<button type="button" onclick="calculateScore()">計算結果</button>
+</div>
+
+</form>
+
+<div id="result" class="result"></div>
+
+</div>
+
+<div class="card">
+<h2>額外觀察（不計分）</h2>
+
+<label><input type="checkbox"> 常忘記帶作業、課本或用品</label><br><br>
+<label><input type="checkbox"> 上課容易分心、發呆</label><br><br>
+<label><input type="checkbox"> 功課常拖到最後一刻</label><br><br>
+<label><input type="checkbox"> 經常遺失文具、鑰匙或重要物品</label><br><br>
+<label><input type="checkbox"> 被老師或家人說過「聰明但粗心」</label>
+
+<p style="margin-top:20px;color:#666;">
+若上述情況從小學或國中時期就已存在，且持續至成年，
+ADHD 的可能性可能提高。
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+"想喝好幾種飲料，結果每杯都喝一點，常常沒喝完。",
+"看影片時，會同時滑手機、回訊息或做其他事情。",
+"別人講話時，常聽到一半就開始想別的事情。",
+"做事情做到一半，突然想到別的事就跑去做。",
+"明明剛放下鑰匙、手機或錢包，卻馬上找不到。",
+
+"房間、桌面或包包容易累積雜物，很難維持整齊。",
+"用過的衛生紙、杯子或包裝常隨手放著忘記收。",
+"常忘記繳費、回覆訊息、預約或其他待辦事項。",
+"明知道有重要事情要做，卻一直拖到最後一刻。",
+"安排行程時，經常低估需要花費的時間。",
+
+"購物時容易衝動下單，之後才發現其實不需要。",
+"別人話還沒講完，就忍不住插話或直接回答。",
+"看到感興趣的東西，會立刻想研究或購買。",
+
+"即使坐著，也常不自覺抖腳、轉筆或摸東西。",
+"腦中經常同時跑很多想法，很難真正放空休息。"
+
+];
+
+const container = document.getElementById("questions");
+
+questions.forEach((q,index)=>{
+
+let html = `
+<div class="question">
+<p>${index+1}. ${q}</p>
+
+<div class="options">
+
+<label>
+<input type="radio" name="q${index}" value="0" required>
+0 幾乎沒有
+</label>
+
+<label>
+<input type="radio" name="q${index}" value="1">
+1 偶爾
+</label>
+
+<label>
+<input type="radio" name="q${index}" value="2">
+2 經常
+</label>
+
+<label>
+<input type="radio" name="q${index}" value="3">
+3 幾乎每天
+</label>
+
+</div>
+</div>
+`;
+
+container.innerHTML += html;
+
+});
+
+function calculateScore(){
+
+let total = 0;
+
+for(let i=0;i<questions.length;i++){
+
+const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+if(!selected){
+alert("請完成所有題目");
+return;
+}
+
+total += Number(selected.value);
+}
+
+let resultText = "";
+let resultClass = "";
+
+if(total <= 10){
+resultText = "ADHD 傾向較低";
+resultClass = "low";
+}
+else if(total <= 20){
+resultText = "有部分 ADHD 特徵";
+resultClass = "mid";
+}
+else if(total <= 30){
+resultText = "中度 ADHD 傾向，建議進一步了解";
+resultClass = "high";
+}
+else{
+resultText = "較高 ADHD 傾向，可考慮尋求專業評估";
+resultClass = "very-high";
+}
+
+const result = document.getElementById("result");
+
+result.style.display = "block";
+result.className = `result ${resultClass}`;
+
+result.innerHTML = `
+<h2>檢測結果</h2>
+<p><strong>總分：${total} / 45</strong></p>
+<p>${resultText}</p>
+<p style="margin-top:15px;color:#666;">
+本測驗僅供自我了解與篩檢參考，
+無法作為 ADHD 診斷依據。
+若症狀已影響工作、人際或生活功能，
+建議諮詢精神科醫師或臨床心理師。
+</p>
+`;
+
+window.scrollTo({
+top: document.body.scrollHeight,
+behavior:"smooth"
+});
+
+}
+</script>
+
+</body>
+</html>
